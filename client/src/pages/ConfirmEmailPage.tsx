@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { apiFetch, ApiError } from '../lib/apiClient';
+import { AuthCard } from '../components/AuthCard';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 type Status = 'loading' | 'success' | 'error';
 
@@ -29,16 +31,17 @@ export function ConfirmEmailPage() {
   }, [searchParams]);
 
   return (
-    <section>
-      <h1>Confirmação de email</h1>
-      {status === 'loading' && <p>A confirmar…</p>}
+    <AuthCard title="Confirmação de email">
+      {status === 'loading' && <p className="text-sm text-slate-600">A confirmar…</p>}
       {status === 'success' && (
         <>
-          <p>Email confirmado com sucesso.</p>
-          <Link to="/login">Iniciar sessão</Link>
+          <p className="mb-4 text-sm text-slate-600">Email confirmado com sucesso.</p>
+          <Link to="/login" className="text-sm font-medium text-indigo-600 hover:underline">
+            Iniciar sessão
+          </Link>
         </>
       )}
-      {status === 'error' && <p role="alert">{message}</p>}
-    </section>
+      {status === 'error' && <ErrorMessage>{message}</ErrorMessage>}
+    </AuthCard>
   );
 }

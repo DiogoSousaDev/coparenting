@@ -2,6 +2,10 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiFetch, ApiError } from '../lib/apiClient';
 import { useAuth } from '../auth/AuthContext';
+import { AuthCard } from '../components/AuthCard';
+import { FormField } from '../components/FormField';
+import { Button } from '../components/Button';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 interface LoginResponse {
   token: string;
@@ -37,26 +41,38 @@ export function LoginPage() {
   }
 
   return (
-    <section>
-      <h1>Iniciar sessão</h1>
+    <AuthCard title="Iniciar sessão">
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={loading}>
+        <FormField
+          label="Email"
+          id="email"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <FormField
+          label="Password"
+          id="password"
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        <Button type="submit" disabled={loading}>
           {loading ? 'A entrar…' : 'Entrar'}
-        </button>
+        </Button>
       </form>
-      <p>
+      <p className="mt-6 text-center text-sm text-slate-600">
         Ainda não tens conta?{' '}
-        <Link to={redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : '/register'}>Registar</Link>
+        <Link
+          to={redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : '/register'}
+          className="font-medium text-indigo-600 hover:underline"
+        >
+          Registar
+        </Link>
       </p>
-    </section>
+    </AuthCard>
   );
 }

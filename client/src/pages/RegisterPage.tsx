@@ -1,6 +1,10 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { apiFetch, ApiError } from '../lib/apiClient';
+import { AuthCard } from '../components/AuthCard';
+import { FormField } from '../components/FormField';
+import { Button } from '../components/Button';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 export function RegisterPage() {
   const [firstName, setFirstName] = useState('');
@@ -33,42 +37,63 @@ export function RegisterPage() {
 
   if (submitted) {
     return (
-      <section>
-        <h1>Confirme o seu email</h1>
-        <p>Enviámos um link de confirmação para {email}. Verifique a sua caixa de entrada (ou os logs da API, em desenvolvimento).</p>
-        <Link to={loginHref}>Já confirmou? Iniciar sessão</Link>
-      </section>
+      <AuthCard title="Confirme o seu email">
+        <p className="mb-4 text-sm text-slate-600">
+          Enviámos um link de confirmação para <span className="font-medium text-slate-900">{email}</span>. Verifique
+          a sua caixa de entrada (ou os logs da API, em desenvolvimento).
+        </p>
+        <Link to={loginHref} className="text-sm font-medium text-indigo-600 hover:underline">
+          Já confirmou? Iniciar sessão
+        </Link>
+      </AuthCard>
     );
   }
 
   return (
-    <section>
-      <h1>Criar conta</h1>
+    <AuthCard title="Criar conta">
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="firstName">Nome próprio</label>
-          <input id="firstName" required value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="lastName">Apelido</label>
-          <input id="lastName" required value={lastName} onChange={(e) => setLastName(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input id="password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} />
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={loading}>
+        <FormField
+          label="Nome próprio"
+          id="firstName"
+          required
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+        />
+        <FormField
+          label="Apelido"
+          id="lastName"
+          required
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+        />
+        <FormField
+          label="Email"
+          id="email"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <FormField
+          label="Password"
+          id="password"
+          type="password"
+          required
+          minLength={8}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        <Button type="submit" disabled={loading}>
           {loading ? 'A registar…' : 'Registar'}
-        </button>
+        </Button>
       </form>
-      <p>
-        Já tens conta? <Link to={loginHref}>Iniciar sessão</Link>
+      <p className="mt-6 text-center text-sm text-slate-600">
+        Já tens conta?{' '}
+        <Link to={loginHref} className="font-medium text-indigo-600 hover:underline">
+          Iniciar sessão
+        </Link>
       </p>
-    </section>
+    </AuthCard>
   );
 }

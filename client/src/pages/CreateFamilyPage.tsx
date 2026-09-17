@@ -2,6 +2,10 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch, ApiError } from '../lib/apiClient';
 import { useAuth } from '../auth/AuthContext';
+import { AuthCard } from '../components/AuthCard';
+import { FormField } from '../components/FormField';
+import { Button } from '../components/Button';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 interface CreateFamilyResponse {
   familyId: string;
@@ -34,29 +38,41 @@ export function CreateFamilyPage() {
   }
 
   return (
-    <section>
-      <h1>Criar unidade familiar</h1>
+    <AuthCard title="Criar unidade familiar">
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Nome da família</label>
-          <input id="name" required value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <fieldset>
-          <legend>O teu papel</legend>
-          <label>
-            <input type="radio" name="role" checked={creatorRole === 0} onChange={() => setCreatorRole(0)} />
-            Pai
-          </label>
-          <label>
-            <input type="radio" name="role" checked={creatorRole === 1} onChange={() => setCreatorRole(1)} />
-            Mãe
-          </label>
+        <FormField label="Nome da família" id="name" required value={name} onChange={(e) => setName(e.target.value)} />
+
+        <fieldset className="mb-4">
+          <legend className="mb-2 block text-sm font-medium text-slate-700">O teu papel</legend>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="radio"
+                name="role"
+                className="text-indigo-600 focus:ring-indigo-500"
+                checked={creatorRole === 0}
+                onChange={() => setCreatorRole(0)}
+              />
+              Pai
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="radio"
+                name="role"
+                className="text-indigo-600 focus:ring-indigo-500"
+                checked={creatorRole === 1}
+                onChange={() => setCreatorRole(1)}
+              />
+              Mãe
+            </label>
+          </div>
         </fieldset>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={loading}>
+
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        <Button type="submit" disabled={loading}>
           {loading ? 'A criar…' : 'Criar família'}
-        </button>
+        </Button>
       </form>
-    </section>
+    </AuthCard>
   );
 }

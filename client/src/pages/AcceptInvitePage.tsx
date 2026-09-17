@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiFetch, ApiError } from '../lib/apiClient';
 import { useAuth } from '../auth/AuthContext';
+import { AuthCard } from '../components/AuthCard';
+import { Button } from '../components/Button';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 interface InviteDetails {
   familyName: string;
@@ -49,43 +52,59 @@ export function AcceptInvitePage() {
 
   if (notFound) {
     return (
-      <section>
-        <h1>Convite não encontrado</h1>
-        <p>Este link de convite é inválido.</p>
-      </section>
+      <AuthCard title="Convite não encontrado">
+        <p className="text-sm text-slate-600">Este link de convite é inválido.</p>
+      </AuthCard>
     );
   }
 
   if (!details) {
-    return <p>A carregar convite…</p>;
+    return (
+      <AuthCard title="Convite">
+        <p className="text-sm text-slate-600">A carregar convite…</p>
+      </AuthCard>
+    );
   }
 
   return (
-    <section>
-      <h1>Convite para {details.familyName}</h1>
-      <p>Convite enviado para {details.invitedEmail}.</p>
+    <AuthCard title={`Convite para ${details.familyName}`}>
+      <p className="mb-4 text-sm text-slate-600">
+        Convite enviado para <span className="font-medium text-slate-900">{details.invitedEmail}</span>.
+      </p>
 
-      {details.alreadyAccepted && <p role="alert">Este convite já foi aceite.</p>}
-      {!details.alreadyAccepted && details.expired && <p role="alert">Este convite expirou.</p>}
+      {details.alreadyAccepted && <ErrorMessage>Este convite já foi aceite.</ErrorMessage>}
+      {!details.alreadyAccepted && details.expired && <ErrorMessage>Este convite expirou.</ErrorMessage>}
 
       {!details.alreadyAccepted && !details.expired && (
         <>
           {isAuthenticated ? (
             <>
-              {error && <p role="alert">{error}</p>}
-              <button onClick={handleAccept} disabled={accepting}>
+              {error && <ErrorMessage>{error}</ErrorMessage>}
+              <Button onClick={handleAccept} disabled={accepting}>
                 {accepting ? 'A aceitar…' : 'Aceitar convite'}
-              </button>
+              </Button>
             </>
           ) : (
-            <p>
+            <p className="text-sm text-slate-600">
               Precisas de entrar na tua conta primeiro:{' '}
-              <Link to={`/login?redirect=${encodeURIComponent(`/accept-invite/${token}`)}`}>Iniciar sessão</Link> ou{' '}
-              <Link to={`/register?redirect=${encodeURIComponent(`/accept-invite/${token}`)}`}>criar conta</Link>.
+              <Link
+                to={`/login?redirect=${encodeURIComponent(`/accept-invite/${token}`)}`}
+                className="font-medium text-indigo-600 hover:underline"
+              >
+                Iniciar sessão
+              </Link>{' '}
+              ou{' '}
+              <Link
+                to={`/register?redirect=${encodeURIComponent(`/accept-invite/${token}`)}`}
+                className="font-medium text-indigo-600 hover:underline"
+              >
+                criar conta
+              </Link>
+              .
             </p>
           )}
         </>
       )}
-    </section>
+    </AuthCard>
   );
 }
