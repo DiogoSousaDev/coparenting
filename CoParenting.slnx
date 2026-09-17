@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CoParenting.Api/CoParenting.Api.csproj" />
+    <Project Path="src/CoParenting.Application/CoParenting.Application.csproj" />
+    <Project Path="src/CoParenting.Domain/CoParenting.Domain.csproj" />
+    <Project Path="src/CoParenting.Infrastructure/CoParenting.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CoParenting.UnitTests/CoParenting.UnitTests.csproj" />
+  </Folder>
+</Solution>

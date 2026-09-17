@@ -1,0 +1,6 @@
+@CoParenting.Api_HostAddress = http://localhost:5063
+
+GET {{CoParenting.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
