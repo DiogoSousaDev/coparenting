@@ -11,6 +11,7 @@ public interface IApplicationDbContext
     DbSet<CalendarEvent> CalendarEvents { get; }
     DbSet<ChatMessage> ChatMessages { get; }
     DbSet<Expense> Expenses { get; }
+    DbSet<FamilyInvite> FamilyInvites { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

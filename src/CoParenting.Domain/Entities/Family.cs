@@ -11,4 +11,5 @@ public class Family
     public ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
     public ICollection<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
     public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+    public ICollection<FamilyInvite> Invites { get; set; } = new List<FamilyInvite>();
 }

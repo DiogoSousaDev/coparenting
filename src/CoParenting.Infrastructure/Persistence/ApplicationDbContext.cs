@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
     public DbSet<Expense> Expenses => Set<Expense>();
+    public DbSet<FamilyInvite> FamilyInvites => Set<FamilyInvite>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -26,11 +27,28 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
         builder.Entity<Family>(entity =>
         {
+            entity.Property(f => f.Name).IsRequired().HasMaxLength(200);
             entity.HasMany(f => f.Members).WithOne(m => m.Family).HasForeignKey(m => m.FamilyId);
             entity.HasMany(f => f.Children).WithOne(c => c.Family).HasForeignKey(c => c.FamilyId);
             entity.HasMany(f => f.CalendarEvents).WithOne(e => e.Family).HasForeignKey(e => e.FamilyId);
             entity.HasMany(f => f.ChatMessages).WithOne(m => m.Family).HasForeignKey(m => m.FamilyId);
             entity.HasMany(f => f.Expenses).WithOne(e => e.Family).HasForeignKey(e => e.FamilyId);
+            entity.HasMany(f => f.Invites).WithOne(i => i.Family).HasForeignKey(i => i.FamilyId);
+        });
+
+        builder.Entity<FamilyMember>().HasIndex(m => new { m.UserId, m.FamilyId }).IsUnique();
+
+        builder.Entity<FamilyInvite>(entity =>
+        {
+            entity.Property(i => i.InvitedEmail).IsRequired().HasMaxLength(256);
+            entity.Property(i => i.TokenHash).IsRequired().HasMaxLength(128);
+            entity.HasIndex(i => i.TokenHash).IsUnique();
+        });
+
+        builder.Entity<ApplicationUser>(entity =>
+        {
+            entity.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
+            entity.Property(u => u.LastName).IsRequired().HasMaxLength(100);
         });
 
         builder.Entity<Expense>().Property(e => e.Amount).HasPrecision(10, 2);
