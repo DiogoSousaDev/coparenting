@@ -14,9 +14,17 @@ interface FamilySummary {
 
 const roleLabel = (role: 0 | 1) => (role === 0 ? 'Pai' : 'Mãe');
 
-function InviteForm({ familyId, token }: { familyId: string; token: string | null }) {
+function InviteForm({
+  familyId,
+  token,
+  currentUserRole,
+}: {
+  familyId: string;
+  token: string | null;
+  currentUserRole: 0 | 1;
+}) {
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<0 | 1>(1);
+  const [role, setRole] = useState<0 | 1>(currentUserRole === 0 ? 1 : 0);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -127,7 +135,7 @@ export function DashboardPage() {
             <article key={family.familyId} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-slate-900">{family.name}</h2>
               <p className="text-sm text-slate-500">O teu papel: {roleLabel(family.role)}</p>
-              <InviteForm familyId={family.familyId} token={token} />
+              <InviteForm familyId={family.familyId} token={token} currentUserRole={family.role} />
             </article>
           ))}
         </div>
