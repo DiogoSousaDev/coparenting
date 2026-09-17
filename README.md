@@ -1,6 +1,6 @@
 # CoParenting
 
-App de coparentalidade (calendário partilhado, chat e despesas para pais separados), construída em C#/.NET + React. Ver [Plano.docx](Plano.docx) para o plano de execução completo (validação, MVP, arquitetura, roadmap, riscos e modelo de negócio).
+App de coparentalidade (calendário partilhado, chat e despesas para pais separados), construída em C#/.NET + React. Ver [Docs/Plano.docx](Docs/Plano.docx) para o plano de execução completo (validação, MVP, arquitetura, roadmap, riscos e modelo de negócio) e [Docs/MANUAL_UTILIZADOR.md](Docs/MANUAL_UTILIZADOR.md) para o manual do utilizador.
 
 ## Estrutura do projeto
 
