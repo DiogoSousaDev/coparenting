@@ -5,6 +5,7 @@ import { AuthCard } from '../components/AuthCard';
 import { FormField } from '../components/FormField';
 import { Button } from '../components/Button';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { GoogleAuthButton } from '../components/GoogleAuthButton';
 
 export function RegisterPage() {
   const [firstName, setFirstName] = useState('');
@@ -13,6 +14,7 @@ export function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [warning, setWarning] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect');
@@ -23,10 +25,11 @@ export function RegisterPage() {
     setError(null);
     setLoading(true);
     try {
-      await apiFetch('/api/auth/register', {
+      const response = await apiFetch<{ warning?: string }>('/api/auth/register', {
         method: 'POST',
         body: { email, password, firstName, lastName },
       });
+      setWarning(response.warning ?? null);
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao registar.');
@@ -38,10 +41,14 @@ export function RegisterPage() {
   if (submitted) {
     return (
       <AuthCard title="Confirme o seu email">
-        <p className="mb-4 text-sm text-slate-600">
-          Enviámos um link de confirmação para <span className="font-medium text-slate-900">{email}</span>. Verifique
-          a sua caixa de entrada (ou os logs da API, em desenvolvimento).
-        </p>
+        {warning ? (
+          <p className="mb-4 text-sm text-amber-600">{warning}</p>
+        ) : (
+          <p className="mb-4 text-sm text-slate-600">
+            Enviámos um link de confirmação para <span className="font-medium text-slate-900">{email}</span>.
+            Verifique a sua caixa de entrada (ou os logs da API, em desenvolvimento).
+          </p>
+        )}
         <Link to={loginHref} className="text-sm font-medium text-indigo-600 hover:underline">
           Já confirmou? Iniciar sessão
         </Link>
@@ -88,6 +95,15 @@ export function RegisterPage() {
           {loading ? 'A registar…' : 'Registar'}
         </Button>
       </form>
+
+      <div className="my-6 flex items-center gap-3">
+        <div className="h-px flex-1 bg-slate-200" />
+        <span className="text-xs text-slate-400">ou</span>
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <GoogleAuthButton onError={setError} />
+
       <p className="mt-6 text-center text-sm text-slate-600">
         Já tens conta?{' '}
         <Link to={loginHref} className="font-medium text-indigo-600 hover:underline">

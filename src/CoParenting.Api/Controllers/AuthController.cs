@@ -14,7 +14,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         [Required] string FirstName,
         [Required] string LastName);
 
-    public record RegisterResponse(Guid UserId, string Message);
+    public record RegisterResponse(Guid UserId, string Message, string? Warning);
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request, CancellationToken cancellationToken)
@@ -25,12 +25,12 @@ public class AuthController(IAuthService authService) : ControllerBase
             return BadRequest(new { Errors = result.Errors });
         }
 
-        return Created(string.Empty, new RegisterResponse(result.UserId!.Value, "Verifique o seu email para confirmar a conta."));
+        return Created(string.Empty, new RegisterResponse(result.UserId!.Value, "Verifique o seu email para confirmar a conta.", result.Warning));
     }
 
     public record LoginRequest([Required, EmailAddress] string Email, [Required] string Password);
 
-    public record LoginResponse(string Token, DateTime ExpiresAtUtc);
+    public record LoginResponse(string Token, DateTime ExpiresAtUtc, string Email);
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
@@ -41,7 +41,21 @@ public class AuthController(IAuthService authService) : ControllerBase
             return BadRequest(new { Errors = result.Errors });
         }
 
-        return Ok(new LoginResponse(result.Token!, result.ExpiresAtUtc!.Value));
+        return Ok(new LoginResponse(result.Token!, result.ExpiresAtUtc!.Value, result.Email!));
+    }
+
+    public record GoogleLoginRequest([Required] string IdToken);
+
+    [HttpPost("google")]
+    public async Task<IActionResult> LoginWithGoogle(GoogleLoginRequest request, CancellationToken cancellationToken)
+    {
+        var result = await authService.LoginWithGoogleAsync(request.IdToken, cancellationToken);
+        if (!result.Succeeded)
+        {
+            return BadRequest(new { Errors = result.Errors });
+        }
+
+        return Ok(new LoginResponse(result.Token!, result.ExpiresAtUtc!.Value, result.Email!));
     }
 
     [HttpGet("confirm-email")]

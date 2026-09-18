@@ -41,7 +41,7 @@ public class FamiliesController(IFamilyService familyService) : ControllerBase
 
     public record CreateInviteRequest([Required, EmailAddress] string Email, FamilyRole Role);
 
-    public record CreateInviteResponse(DateTime ExpiresAtUtc, string? DevToken);
+    public record CreateInviteResponse(DateTime ExpiresAtUtc, string? DevToken, string? Warning);
 
     [HttpPost("{id:guid}/invite")]
     public async Task<IActionResult> CreateInvite(Guid id, CreateInviteRequest request, [FromServices] IHostEnvironment env, CancellationToken cancellationToken)
@@ -54,6 +54,6 @@ public class FamiliesController(IFamilyService familyService) : ControllerBase
 
         // DevToken só é devolvido em desenvolvimento, para testar via .http sem ler os logs.
         var devToken = env.IsDevelopment() ? result.RawToken : null;
-        return Ok(new CreateInviteResponse(result.ExpiresAtUtc!.Value, devToken));
+        return Ok(new CreateInviteResponse(result.ExpiresAtUtc!.Value, devToken, result.Warning));
     }
 }

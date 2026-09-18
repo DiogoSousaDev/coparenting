@@ -33,10 +33,29 @@ builder.Services
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<AppOptions>(builder.Configuration.GetSection("App"));
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.Configure<GoogleOptions>(builder.Configuration.GetSection("Google"));
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
+builder.Services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
+
+var resendApiKey = builder.Configuration["Resend:ApiKey"];
+if (string.IsNullOrWhiteSpace(resendApiKey))
+{
+    // Sem chave configurada (ex. em desenvolvimento local sem user-secrets definidos):
+    // os emails ficam só nos logs, para não bloquear o trabalho no resto da app.
+    builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
+}
+else
+{
+    builder.Services.Configure<ResendOptions>(builder.Configuration.GetSection("Resend"));
+    builder.Services.AddHttpClient<IEmailSender, ResendEmailSender>(client =>
+    {
+        client.BaseAddress = new Uri("https://api.resend.com/");
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", resendApiKey);
+    });
+}
+
 builder.Services.AddScoped<IFamilyAccessService, FamilyAccessService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFamilyService, FamilyService>();

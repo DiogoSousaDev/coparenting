@@ -1,5 +1,6 @@
 using CoParenting.Application.Common.Interfaces;
 using CoParenting.Application.Common.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CoParenting.Application.Auth;
@@ -8,7 +9,9 @@ public class AuthService(
     IIdentityService identityService,
     IJwtTokenGenerator jwtTokenGenerator,
     IEmailSender emailSender,
-    IOptions<AppOptions> appOptions) : IAuthService
+    IGoogleTokenValidator googleTokenValidator,
+    IOptions<AppOptions> appOptions,
+    ILogger<AuthService> logger) : IAuthService
 {
     public async Task<RegisterResult> RegisterAsync(string email, string password, string firstName, string lastName, CancellationToken cancellationToken = default)
     {
@@ -21,13 +24,24 @@ public class AuthService(
         var token = await identityService.GenerateEmailConfirmationTokenAsync(userId);
         var confirmationLink = $"{appOptions.Value.ClientBaseUrl}/confirm-email?userId={userId}&token={Uri.EscapeDataString(token)}";
 
-        await emailSender.SendAsync(
-            email,
-            "Confirme o seu email — CoParenting",
-            $"Olá {firstName},<br/>Confirme o seu email clicando <a href=\"{confirmationLink}\">aqui</a>.",
-            cancellationToken);
+        string? warning = null;
+        try
+        {
+            await emailSender.SendAsync(
+                email,
+                "Confirme o seu email — CoParenting",
+                $"Olá {firstName},<br/>Confirme o seu email clicando <a href=\"{confirmationLink}\">aqui</a>.",
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // A conta já foi criada mesmo que o envio do email falhe — uma falha temporária
+            // do provedor de email não deve bloquear o registo.
+            logger.LogWarning(ex, "Falha ao enviar email de confirmação para {Email}", email);
+            warning = "Conta criada, mas não foi possível enviar o email de confirmação. Tenta novamente mais tarde.";
+        }
 
-        return RegisterResult.Success(userId);
+        return RegisterResult.Success(userId, warning);
     }
 
     public async Task<ConfirmEmailResult> ConfirmEmailAsync(Guid userId, string token, CancellationToken cancellationToken = default)
@@ -59,6 +73,25 @@ public class AuthService(
         }
 
         var token = jwtTokenGenerator.CreateToken(userId.Value, email);
-        return LoginResult.Success(token.Value, token.ExpiresAtUtc);
+        return LoginResult.Success(token.Value, token.ExpiresAtUtc, email);
+    }
+
+    public async Task<LoginResult> LoginWithGoogleAsync(string googleIdToken, CancellationToken cancellationToken = default)
+    {
+        var googleUser = await googleTokenValidator.ValidateAsync(googleIdToken, cancellationToken);
+        if (googleUser is null)
+        {
+            return LoginResult.Failure("Token do Google inválido.");
+        }
+
+        if (!googleUser.EmailVerified)
+        {
+            return LoginResult.Failure("O email da conta Google não está verificado.");
+        }
+
+        var userId = await identityService.FindOrCreateExternalUserAsync(googleUser.Email, googleUser.FirstName, googleUser.LastName);
+
+        var token = jwtTokenGenerator.CreateToken(userId, googleUser.Email);
+        return LoginResult.Success(token.Value, token.ExpiresAtUtc, googleUser.Email);
     }
 }

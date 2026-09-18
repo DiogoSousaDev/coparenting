@@ -6,6 +6,7 @@ import { AuthCard } from '../components/AuthCard';
 import { FormField } from '../components/FormField';
 import { Button } from '../components/Button';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { GoogleAuthButton } from '../components/GoogleAuthButton';
 
 interface LoginResponse {
   token: string;
@@ -64,6 +65,15 @@ export function LoginPage() {
           {loading ? 'A entrar…' : 'Entrar'}
         </Button>
       </form>
+
+      <div className="my-6 flex items-center gap-3">
+        <div className="h-px flex-1 bg-slate-200" />
+        <span className="text-xs text-slate-400">ou</span>
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <GoogleAuthButton onError={setError} />
+
       <p className="mt-6 text-center text-sm text-slate-600">
         Ainda não tens conta?{' '}
         <Link

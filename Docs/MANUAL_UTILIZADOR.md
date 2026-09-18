@@ -4,13 +4,13 @@
 
 **Legenda de estado:** 🔴 Planeado · 🟡 Em desenvolvimento · 🟢 Disponível
 
-## Estado atual (17 set 2026)
+## Estado atual (18 set 2026)
 
-O projeto está na fase de setup técnico (Semana 0). Ainda não existe nenhuma funcionalidade utilizável — este manual serve de referência para o que a app fará, e será atualizado secção a secção conforme o roadmap (secção 6 do plano) avança.
+A primeira funcionalidade do MVP está disponível: registo, login e unidade familiar. As restantes (calendário, chat, despesas) ainda não têm interface utilizável.
 
 | Funcionalidade | Estado |
 |---|---|
-| Registo e unidade familiar | 🔴 Planeado |
+| Registo e unidade familiar | 🟢 Disponível |
 | Calendário partilhado | 🔴 Planeado |
 | Chat | 🔴 Planeado |
 | Despesas partilhadas | 🔴 Planeado |
@@ -20,12 +20,15 @@ O projeto está na fase de setup técnico (Semana 0). Ainda não existe nenhuma 
 
 O CoParenting é uma aplicação web para pais separados organizarem, num único lugar, o calendário de guarda dos filhos, a comunicação entre ambos e o registo de despesas partilhadas — substituindo a mistura habitual de WhatsApp, folhas de Excel e chamadas telefónicas.
 
-## 2. Registo e unidade familiar 🔴
+## 2. Registo e unidade familiar 🟢
 
-Planeado:
-- Cada progenitor cria uma conta com email e password.
-- O primeiro progenitor cria a "unidade familiar" e convida o segundo por email.
-- Ambos os pais têm acesso aos mesmos dados da família (calendário, chat, despesas); os filhos são associados à unidade familiar, não a uma conta individual.
+- Cada progenitor cria uma conta com email e password, ou entra diretamente com a conta Google (sem necessidade de confirmar email nesse caso, já que a Google garante essa verificação).
+- No registo com email, é enviado um link de confirmação antes de ser possível iniciar sessão.
+- O primeiro progenitor cria a "unidade familiar" (escolhendo o seu papel, Pai ou Mãe) e convida o segundo por email — o convite inclui um link de aceitação válido por 7 dias.
+- O convidado só consegue aceitar o convite autenticado com o mesmo email para o qual foi enviado; se tentar com outra conta, a app avisa e permite trocar de sessão sem perder o convite.
+- Ambos os progenitores passam a ter acesso aos mesmos dados da família; os filhos serão associados à unidade familiar, não a uma conta individual.
+- Um utilizador pode pertencer a mais do que uma unidade familiar (ex: um pai com filhos de mães diferentes participa em duas famílias distintas).
+- Cada família está limitada a 2 membros.
 
 ## 3. Calendário partilhado 🔴
 
@@ -74,4 +77,5 @@ Os pagamentos só serão ativados depois da fase de Beta (secção 7 do plano) c
 
 | Data | Alteração |
 |---|---|
+| 2026-09-18 | Secção 2 (Registo e unidade familiar) passa a 🟢 Disponível: registo/login (email+password e Google), confirmação de email, criação de família e convites. |
 | 2026-09-17 | Criação inicial do manual — nenhuma funcionalidade implementada ainda, apenas setup técnico do projeto. |

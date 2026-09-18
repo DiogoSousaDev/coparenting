@@ -26,6 +26,7 @@ function InviteForm({
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<0 | 1>(currentUserRole === 0 ? 1 : 0);
   const [message, setMessage] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -33,14 +34,19 @@ function InviteForm({
     e.preventDefault();
     setError(null);
     setMessage(null);
+    setWarning(null);
     setLoading(true);
     try {
-      await apiFetch(`/api/families/${familyId}/invite`, {
+      const response = await apiFetch<{ warning?: string }>(`/api/families/${familyId}/invite`, {
         method: 'POST',
         token,
         body: { email, role },
       });
-      setMessage(`Convite enviado para ${email}.`);
+      if (response.warning) {
+        setWarning(response.warning);
+      } else {
+        setMessage(`Convite enviado para ${email}.`);
+      }
       setEmail('');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao enviar convite.');
@@ -85,6 +91,7 @@ function InviteForm({
         </div>
       </div>
       {message && <p className="text-sm text-emerald-600">{message}</p>}
+      {warning && <p className="text-sm text-amber-600">{warning}</p>}
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </form>
   );

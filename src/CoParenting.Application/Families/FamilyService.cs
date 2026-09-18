@@ -2,6 +2,7 @@ using CoParenting.Application.Common.Interfaces;
 using CoParenting.Application.Common.Models;
 using CoParenting.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CoParenting.Application.Families;
@@ -10,7 +11,8 @@ public class FamilyService(
     IApplicationDbContext dbContext,
     IFamilyAccessService familyAccessService,
     IEmailSender emailSender,
-    IOptions<AppOptions> appOptions) : IFamilyService
+    IOptions<AppOptions> appOptions,
+    ILogger<FamilyService> logger) : IFamilyService
 {
     private static readonly TimeSpan InviteLifetime = TimeSpan.FromDays(7);
     private const int MaxFamilyMembers = 2;
@@ -76,13 +78,24 @@ public class FamilyService(
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var acceptLink = $"{appOptions.Value.ClientBaseUrl}/accept-invite/{rawToken}";
-        await emailSender.SendAsync(
-            inviteeEmail,
-            $"Convite para a família {family.Name} — CoParenting",
-            $"Foste convidado(a) para a unidade familiar \"{family.Name}\" no CoParenting. Aceita o convite <a href=\"{acceptLink}\">aqui</a>.",
-            cancellationToken);
+        string? warning = null;
+        try
+        {
+            await emailSender.SendAsync(
+                inviteeEmail,
+                $"Convite para a família {family.Name} — CoParenting",
+                $"Foste convidado(a) para a unidade familiar \"{family.Name}\" no CoParenting. Aceita o convite <a href=\"{acceptLink}\">aqui</a>.",
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // O convite já foi criado (e é válido) mesmo que o envio do email falhe —
+            // uma falha temporária do provedor de email não deve bloquear o fluxo de convite.
+            logger.LogWarning(ex, "Falha ao enviar email de convite para {Email}", inviteeEmail);
+            warning = "Convite criado, mas não foi possível enviar o email. Partilha o link manualmente.";
+        }
 
-        return InviteResult.Success(expiresAtUtc, rawToken);
+        return InviteResult.Success(expiresAtUtc, rawToken, warning);
     }
 
     public async Task<InviteDetailsResult> GetInviteDetailsAsync(string rawToken, CancellationToken cancellationToken = default)

@@ -23,7 +23,7 @@ export function AcceptInvitePage() {
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [accepting, setAccepting] = useState(false);
-  const { token: authToken, isAuthenticated } = useAuth();
+  const { token: authToken, isAuthenticated, email: currentEmail, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,14 +77,29 @@ export function AcceptInvitePage() {
 
       {!details.alreadyAccepted && !details.expired && (
         <>
-          {isAuthenticated ? (
+          {isAuthenticated && currentEmail?.toLowerCase() === details.invitedEmail.toLowerCase() && (
             <>
               {error && <ErrorMessage>{error}</ErrorMessage>}
               <Button onClick={handleAccept} disabled={accepting}>
                 {accepting ? 'A aceitar…' : 'Aceitar convite'}
               </Button>
             </>
-          ) : (
+          )}
+
+          {isAuthenticated && currentEmail?.toLowerCase() !== details.invitedEmail.toLowerCase() && (
+            <>
+              <p className="mb-4 text-sm text-slate-600">
+                Este convite é para <span className="font-medium text-slate-900">{details.invitedEmail}</span>, mas
+                estás autenticado como <span className="font-medium text-slate-900">{currentEmail}</span>. Termina
+                sessão e entra com a conta certa para aceitar.
+              </p>
+              <Button variant="secondary" onClick={logout}>
+                Terminar sessão
+              </Button>
+            </>
+          )}
+
+          {!isAuthenticated && (
             <p className="text-sm text-slate-600">
               Precisas de entrar na tua conta primeiro:{' '}
               <Link

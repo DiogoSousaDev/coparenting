@@ -3,6 +3,7 @@ using CoParenting.Application.Families;
 using CoParenting.Domain.Entities;
 using CoParenting.UnitTests.TestUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace CoParenting.UnitTests.Families;
@@ -13,7 +14,7 @@ public class FamilyServiceTests : IDisposable
     private static readonly IOptions<AppOptions> AppOptions = Options.Create(new AppOptions { ClientBaseUrl = "http://localhost:5173" });
 
     private FamilyService CreateSut(CoParenting.Infrastructure.Persistence.ApplicationDbContext context, FakeEmailSender? emailSender = null) =>
-        new(context, new FamilyAccessService(context), emailSender ?? new FakeEmailSender(), AppOptions);
+        new(context, new FamilyAccessService(context), emailSender ?? new FakeEmailSender(), AppOptions, NullLogger<FamilyService>.Instance);
 
     [Fact]
     public async Task CreateFamilyAsync_AllowsUserToCreateMultipleFamilies()

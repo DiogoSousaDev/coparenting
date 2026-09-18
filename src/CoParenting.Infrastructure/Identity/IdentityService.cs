@@ -63,4 +63,31 @@ public class IdentityService(UserManager<ApplicationUser> userManager) : IIdenti
         var user = await userManager.FindByEmailAsync(email);
         return user?.Id;
     }
+
+    public async Task<Guid> FindOrCreateExternalUserAsync(string email, string firstName, string lastName)
+    {
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser is not null)
+        {
+            return existingUser.Id;
+        }
+
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(user);
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(
+                $"Falha ao criar utilizador via login externo: {string.Join("; ", result.Errors.Select(e => e.Description))}");
+        }
+
+        return user.Id;
+    }
 }

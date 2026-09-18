@@ -21,9 +21,18 @@ client/                       # React + TypeScript (Vite)
 
 - .NET SDK 10
 - Node.js 22+
-- PostgreSQL (local ou container) — connection string em `src/CoParenting.Api/appsettings.json`
+- Docker (para o Postgres local via `docker-compose`)
 
 ## Correr localmente
+
+Base de dados:
+
+```bash
+docker compose up -d
+dotnet ef database update \
+  --project src/CoParenting.Infrastructure/CoParenting.Infrastructure.csproj \
+  --startup-project src/CoParenting.Api/CoParenting.Api.csproj
+```
 
 Backend:
 
@@ -37,6 +46,7 @@ Frontend:
 ```bash
 cd client
 npm install
+cp .env.example .env   # ajustar se necessário
 npm run dev
 ```
 
@@ -46,6 +56,24 @@ npm run dev
 dotnet test
 ```
 
+## Configuração de email e login com Google (opcional)
+
+Sem configuração adicional, a app funciona em modo de desenvolvimento: emails de confirmação/convite ficam só nos logs da API, e o botão "Iniciar sessão com o Google" não funciona.
+
+Para emails reais (via [Resend](https://resend.com), tem tier gratuito sem cartão de crédito):
+
+```bash
+dotnet user-secrets set "Resend:ApiKey" "re_..." --project src/CoParenting.Api
+```
+
+Sem domínio verificado no Resend, só chegam emails ao endereço com que criaste a conta Resend (modo sandbox).
+
+Para login com Google, cria um OAuth Client ID (tipo "Web application") na [Google Cloud Console](https://console.cloud.google.com/) e define:
+- `Google:ClientId` em `src/CoParenting.Api/appsettings.json` (não é secreto)
+- `VITE_GOOGLE_CLIENT_ID` em `client/.env`
+
 ## Estado atual
 
-Setup técnico inicial (Semana 0 do plano): estrutura da solution, referências entre camadas, DbContext com Identity, cliente React e CI. As entidades do modelo de dados (secção 5 do plano) estão modeladas em `CoParenting.Domain`, mas as migrations EF Core, autenticação e funcionalidades do MVP ainda não foram implementadas — ficam para depois de fechar a fase de validação (secção 2 do plano).
+**Concluído:** autenticação (registo/login com email+password e com Google), confirmação de email, criação de unidade familiar e convite do segundo progenitor por email — primeira funcionalidade do MVP (secção 6 do plano, Semanas 4-5). Um utilizador pode pertencer a mais do que uma família. Ver [Docs/MANUAL_UTILIZADOR.md](Docs/MANUAL_UTILIZADOR.md) para o detalhe funcional.
+
+**A seguir:** calendário partilhado (Semanas 6-7 do plano).
