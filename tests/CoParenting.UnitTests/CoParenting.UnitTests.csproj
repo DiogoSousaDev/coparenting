@@ -20,9 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\CoParenting.Domain\CoParenting.Domain.csproj" />
-    <ProjectReference Include="..\..\src\CoParenting.Application\CoParenting.Application.csproj" />
-    <ProjectReference Include="..\..\src\CoParenting.Infrastructure\CoParenting.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Building Blocks\Core\Core.csproj" />
+    <ProjectReference Include="..\..\src\Services\Authentication\Authentication.csproj" />
+    <ProjectReference Include="..\..\src\Services\Families\Families.csproj" />
+    <ProjectReference Include="..\..\src\Host\CoParenting.Api.csproj" />
   </ItemGroup>
 
 </Project>

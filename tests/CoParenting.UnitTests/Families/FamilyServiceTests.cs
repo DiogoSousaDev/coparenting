@@ -1,6 +1,5 @@
-using CoParenting.Application.Common.Models;
-using CoParenting.Application.Families;
-using CoParenting.Domain.Entities;
+using CoParenting.BuildingBlocks.Core.Common.Models;
+using CoParenting.Services.Families;
 using CoParenting.UnitTests.TestUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -13,7 +12,7 @@ public class FamilyServiceTests : IDisposable
     private readonly SqliteDbContextFactory _factory = new();
     private static readonly IOptions<AppOptions> AppOptions = Options.Create(new AppOptions { ClientBaseUrl = "http://localhost:5173" });
 
-    private FamilyService CreateSut(CoParenting.Infrastructure.Persistence.ApplicationDbContext context, FakeEmailSender? emailSender = null) =>
+    private FamilyService CreateSut(CoParenting.Api.Persistence.ApplicationDbContext context, FakeEmailSender? emailSender = null) =>
         new(context, new FamilyAccessService(context), emailSender ?? new FakeEmailSender(), AppOptions, NullLogger<FamilyService>.Instance);
 
     [Fact]

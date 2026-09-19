@@ -1,4 +1,4 @@
-using CoParenting.Application.Common.Interfaces;
+using CoParenting.BuildingBlocks.Core.Common.Interfaces;
 
 namespace CoParenting.UnitTests.TestUtilities;
 

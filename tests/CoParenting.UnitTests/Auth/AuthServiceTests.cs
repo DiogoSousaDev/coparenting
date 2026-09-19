@@ -1,6 +1,6 @@
-using CoParenting.Application.Auth;
-using CoParenting.Application.Common.Interfaces;
-using CoParenting.Application.Common.Models;
+using CoParenting.BuildingBlocks.Core.Common.Interfaces;
+using CoParenting.BuildingBlocks.Core.Common.Models;
+using CoParenting.Services.Authentication;
 using CoParenting.UnitTests.TestUtilities;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;

@@ -1,9 +1,16 @@
 <Solution>
-  <Folder Name="/src/">
-    <Project Path="src/CoParenting.Api/CoParenting.Api.csproj" />
-    <Project Path="src/CoParenting.Application/CoParenting.Application.csproj" />
-    <Project Path="src/CoParenting.Domain/CoParenting.Domain.csproj" />
-    <Project Path="src/CoParenting.Infrastructure/CoParenting.Infrastructure.csproj" />
+  <Folder Name="/src/Building Blocks/">
+    <Project Path="src/Building Blocks/Core/Core.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/">
+    <Project Path="src/Services/Authentication/Authentication.csproj" />
+    <Project Path="src/Services/Families/Families.csproj" />
+    <Project Path="src/Services/Calendar/Calendar.csproj" />
+    <Project Path="src/Services/Chat/Chat.csproj" />
+    <Project Path="src/Services/Expenses/Expenses.csproj" />
+  </Folder>
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/CoParenting.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/CoParenting.UnitTests/CoParenting.UnitTests.csproj" />

@@ -1,4 +1,4 @@
-using CoParenting.Infrastructure.Persistence;
+using CoParenting.Api.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 

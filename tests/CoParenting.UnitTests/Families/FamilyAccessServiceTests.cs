@@ -1,5 +1,4 @@
-using CoParenting.Application.Families;
-using CoParenting.Domain.Entities;
+using CoParenting.Services.Families;
 using CoParenting.UnitTests.TestUtilities;
 
 namespace CoParenting.UnitTests.Families;

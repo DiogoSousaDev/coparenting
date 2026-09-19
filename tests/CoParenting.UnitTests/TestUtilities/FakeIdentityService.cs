@@ -1,5 +1,5 @@
-using CoParenting.Application.Common.Interfaces;
-using CoParenting.Application.Common.Models;
+using CoParenting.BuildingBlocks.Core.Common.Interfaces;
+using CoParenting.BuildingBlocks.Core.Common.Models;
 
 namespace CoParenting.UnitTests.TestUtilities;
 
