@@ -140,8 +140,18 @@ export function DashboardPage() {
         <div className="space-y-4">
           {families?.map((family) => (
             <article key={family.familyId} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900">{family.name}</h2>
-              <p className="text-sm text-slate-500">O teu papel: {roleLabel(family.role)}</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900">{family.name}</h2>
+                  <p className="text-sm text-slate-500">O teu papel: {roleLabel(family.role)}</p>
+                </div>
+                <Link
+                  to={`/calendar/${family.familyId}`}
+                  className="text-sm font-medium text-indigo-600 hover:underline"
+                >
+                  Ver calendário
+                </Link>
+              </div>
               <InviteForm familyId={family.familyId} token={token} currentUserRole={family.role} />
             </article>
           ))}

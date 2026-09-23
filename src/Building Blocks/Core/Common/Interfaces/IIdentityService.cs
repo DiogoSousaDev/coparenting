@@ -12,6 +12,7 @@ public interface IIdentityService
     Task<bool> IsEmailConfirmedAsync(Guid userId);
     Task<bool> CheckPasswordAsync(Guid userId, string password);
     Task<Guid?> FindUserIdByEmailAsync(string email);
+    Task<string?> FindEmailByUserIdAsync(Guid userId);
 
     // Login externo (Google, etc.): encontra o utilizador pelo email ou cria um novo,
     // já com o email confirmado (o provedor externo já garantiu a posse do email).

@@ -6,6 +6,8 @@ using CoParenting.BuildingBlocks.Core.Email;
 using CoParenting.BuildingBlocks.Core.Identity;
 using CoParenting.Services.Authentication;
 using CoParenting.Services.Authentication.Controllers;
+using CoParenting.Services.Calendar;
+using CoParenting.Services.Calendar.Controllers;
 using CoParenting.Services.Families;
 using CoParenting.Services.Families.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,13 +24,15 @@ builder.Services.AddControllers()
     // Os Controllers vivem nos projetos de cada Service (Authentication, Families), não neste
     // Host — é preciso registar explicitamente os respetivos assemblies para o MVC os descobrir.
     .AddApplicationPart(typeof(AuthController).Assembly)
-    .AddApplicationPart(typeof(FamiliesController).Assembly);
+    .AddApplicationPart(typeof(FamiliesController).Assembly)
+    .AddApplicationPart(typeof(CalendarEventsController).Assembly);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IFamiliesDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
+builder.Services.AddScoped<ICalendarDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
 builder.Services
     .AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedEmail = true)
@@ -65,6 +69,7 @@ else
 builder.Services.AddScoped<IFamilyAccessService, FamilyAccessService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFamilyService, FamilyService>();
+builder.Services.AddScoped<ICalendarService, CalendarService>();
 
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
 

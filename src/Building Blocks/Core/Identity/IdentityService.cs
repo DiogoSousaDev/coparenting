@@ -64,6 +64,12 @@ public class IdentityService(UserManager<ApplicationUser> userManager) : IIdenti
         return user?.Id;
     }
 
+    public async Task<string?> FindEmailByUserIdAsync(Guid userId)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        return user?.Email;
+    }
+
     public async Task<Guid> FindOrCreateExternalUserAsync(string email, string firstName, string lastName)
     {
         var existingUser = await userManager.FindByEmailAsync(email);

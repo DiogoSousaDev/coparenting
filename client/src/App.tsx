@@ -8,6 +8,7 @@ import { ConfirmEmailPage } from './pages/ConfirmEmailPage';
 import { CreateFamilyPage } from './pages/CreateFamilyPage';
 import { AcceptInvitePage } from './pages/AcceptInvitePage';
 import { DashboardPage } from './pages/DashboardPage';
+import { CalendarPage } from './pages/CalendarPage';
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
@@ -35,6 +36,14 @@ function App() {
               element={
                 <RequireAuth>
                   <CreateFamilyPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/calendar/:familyId"
+              element={
+                <RequireAuth>
+                  <CalendarPage />
                 </RequireAuth>
               }
             />

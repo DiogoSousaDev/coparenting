@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoParenting.Api.Persistence;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>, IFamiliesDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>, IFamiliesDbContext, ICalendarDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -37,7 +37,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
         // CalendarEvent/ChatMessage/Expense vivem em projetos Services separados de Families,
         // por isso não têm navegação para Family — a relação fica só pelo FamilyId (shadow FK).
-        builder.Entity<CalendarEvent>().HasOne<Family>().WithMany().HasForeignKey(e => e.FamilyId);
+        builder.Entity<CalendarEvent>(entity =>
+        {
+            entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.RecurrenceRule).HasMaxLength(500);
+            entity.HasOne<Family>().WithMany().HasForeignKey(e => e.FamilyId);
+        });
         builder.Entity<ChatMessage>().HasOne<Family>().WithMany().HasForeignKey(m => m.FamilyId);
         builder.Entity<Expense>().HasOne<Family>().WithMany().HasForeignKey(e => e.FamilyId);
 

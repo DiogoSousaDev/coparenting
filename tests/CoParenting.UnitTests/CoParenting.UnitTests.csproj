@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\src\Building Blocks\Core\Core.csproj" />
     <ProjectReference Include="..\..\src\Services\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\..\src\Services\Families\Families.csproj" />
+    <ProjectReference Include="..\..\src\Services\Calendar\Calendar.csproj" />
     <ProjectReference Include="..\..\src\Host\CoParenting.Api.csproj" />
   </ItemGroup>
 

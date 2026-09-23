@@ -50,6 +50,9 @@ public class FakeIdentityService : IIdentityService
     public Task<Guid?> FindUserIdByEmailAsync(string email) =>
         Task.FromResult(_users.FirstOrDefault(u => u.Email == email)?.Id);
 
+    public Task<string?> FindEmailByUserIdAsync(Guid userId) =>
+        Task.FromResult(_users.FirstOrDefault(u => u.Id == userId)?.Email);
+
     public Task<Guid> FindOrCreateExternalUserAsync(string email, string firstName, string lastName)
     {
         var existing = _users.FirstOrDefault(u => u.Email == email);
