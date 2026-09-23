@@ -9,6 +9,7 @@ import { CreateFamilyPage } from './pages/CreateFamilyPage';
 import { AcceptInvitePage } from './pages/AcceptInvitePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CalendarPage } from './pages/CalendarPage';
+import { CustodySettingsPage } from './pages/CustodySettingsPage';
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
@@ -44,6 +45,14 @@ function App() {
               element={
                 <RequireAuth>
                   <CalendarPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/custody/:familyId"
+              element={
+                <RequireAuth>
+                  <CustodySettingsPage />
                 </RequireAuth>
               }
             />

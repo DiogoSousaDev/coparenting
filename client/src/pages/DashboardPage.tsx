@@ -145,12 +145,20 @@ export function DashboardPage() {
                   <h2 className="text-lg font-semibold text-slate-900">{family.name}</h2>
                   <p className="text-sm text-slate-500">O teu papel: {roleLabel(family.role)}</p>
                 </div>
-                <Link
-                  to={`/calendar/${family.familyId}`}
-                  className="text-sm font-medium text-indigo-600 hover:underline"
-                >
-                  Ver calendário
-                </Link>
+                <div className="flex flex-col items-end gap-1">
+                  <Link
+                    to={`/calendar/${family.familyId}`}
+                    className="text-sm font-medium text-indigo-600 hover:underline"
+                  >
+                    Ver calendário
+                  </Link>
+                  <Link
+                    to={`/custody/${family.familyId}`}
+                    className="text-xs font-medium text-slate-500 hover:underline"
+                  >
+                    Configurar guarda
+                  </Link>
+                </div>
               </div>
               <InviteForm familyId={family.familyId} token={token} currentUserRole={family.role} />
             </article>

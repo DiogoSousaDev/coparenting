@@ -20,6 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Child> Children => Set<Child>();
     public DbSet<FamilyInvite> FamilyInvites => Set<FamilyInvite>();
     public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();
+    public DbSet<CustodySchedule> CustodySchedules => Set<CustodySchedule>();
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
     public DbSet<Expense> Expenses => Set<Expense>();
 
@@ -45,6 +46,24 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         });
         builder.Entity<ChatMessage>().HasOne<Family>().WithMany().HasForeignKey(m => m.FamilyId);
         builder.Entity<Expense>().HasOne<Family>().WithMany().HasForeignKey(e => e.FamilyId);
+
+        builder.Entity<CustodySchedule>(entity =>
+        {
+            entity.HasIndex(c => c.FamilyId).IsUnique();
+            entity.Property(c => c.PaiColor).IsRequired().HasMaxLength(7);
+            entity.Property(c => c.MaeColor).IsRequired().HasMaxLength(7);
+            entity.HasOne<Family>().WithMany().HasForeignKey(c => c.FamilyId);
+
+            // Segments não têm identidade própria fora do schedule — guardar/substituir a
+            // guarda é sempre um replace da lista toda, nunca um CRUD por bloco.
+            entity.OwnsMany(c => c.Segments, segment =>
+            {
+                segment.WithOwner().HasForeignKey("CustodyScheduleId");
+                segment.HasKey("CustodyScheduleId", nameof(CustodySegment.OrderIndex));
+                segment.Property(s => s.OrderIndex).ValueGeneratedNever();
+                segment.ToTable("CustodySegments");
+            });
+        });
 
         builder.Entity<FamilyMember>().HasIndex(m => new { m.UserId, m.FamilyId }).IsUnique();
 
